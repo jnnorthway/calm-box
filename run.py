@@ -34,15 +34,18 @@ def interpolate(value, range_one, range_two):
 
 def color_fade_off(strip, brightness, timer_length, sleep_time_ms=20):
     """Fade strip to black."""
+    if strip.getBrightness() == 0:
+        return
     current_time = time.time()
     end_time = current_time + timer_length
     while current_time < end_time:
-        current_time = time.time()
         progress = timer_length - (end_time - current_time)
         px_brightness = interpolate(progress, (0, timer_length), (brightness, 0))
+        print(px_brightness)
         strip.setBrightness(px_brightness)
         strip.show()
         time.sleep(sleep_time_ms / 1000.0)
+        current_time = time.time()
 
 
 def color_fade_on(
@@ -57,23 +60,23 @@ def color_fade_on(
     current_time = time.time()
     end_time = current_time + timer_length
     while current_time < end_time:
-        current_time = time.time()
         progress = timer_length - (end_time - current_time)
         px_brightness = interpolate(progress, (0, timer_length), (0, end_brightness))
         strip.setBrightness(px_brightness)
         strip.show()
         time.sleep(sleep_time_ms / 1000.0)
+        current_time = time.time()
 
 
 def color_blink(strip, brightness, timer_length, sleep_time_ms=20):
     current_time = time.time()
     end_time = current_time + timer_length
     while current_time < end_time:
-        current_time = time.time()
         color_fade_off(strip, brightness, 5)
         time.sleep(sleep_time_ms / 1000.0)
         color_fade_on(strip, brightness, 5)
         time.sleep(sleep_time_ms / 1000.0)
+        current_time = time.time()
     color_fade_off(strip, brightness, 5)
 
 
@@ -127,7 +130,6 @@ def timer(
     RUNNING = True
     color_fade_on(strip, brightness, 5, start_color)
     while current_time < middle_time and RUNNING:
-        current_time = time.time()
         px_color = get_timer_color(
             half_time, current_time, middle_time, start_color, middle_color
         )
@@ -135,8 +137,8 @@ def timer(
             strip.setPixelColor(i, px_color)
         strip.show()
         time.sleep(sleep_time_ms / 1000.0)
-    while current_time < end_time and RUNNING:
         current_time = time.time()
+    while current_time < end_time and RUNNING:
         px_color = get_timer_color(
             half_time, current_time, end_time, middle_color, end_color
         )
@@ -144,6 +146,7 @@ def timer(
             strip.setPixelColor(i, px_color)
         strip.show()
         time.sleep(sleep_time_ms / 1000.0)
+        current_time = time.time()
     if RUNNING:
         color_blink(strip, brightness, transition_time)
     else:
@@ -178,20 +181,34 @@ def end_timer():
     color_fade_off(STRIP, brightness, 3)
 
 
+def start_up():
+    global MODE, CONFIG, STRIP
+    white = Color(255,255,255)
+    brightness = int(CONFIG["led"]["brightness"])
+    STRIP.setBrightness(0)
+    color_fade_off(STRIP, brightness, 1)
+    time.sleep(20 / 1000.0)
+    color_fade_on(STRIP, brightness, 0.5, white)
+    time.sleep(20 / 1000.0)
+    color_fade_off(STRIP, brightness, 0.5)
+    time.sleep(20 / 1000.0)
+    color_fade_on(STRIP, brightness, 0.5)
+    time.sleep(20 / 1000.0)
+    color_fade_off(STRIP, brightness, 0.5)
+
+
 def set_mode():
     global MODE, CONFIG, STRIP
     # Cycle the selection
     if MODE == 1:
-        mode_str = "mode_two"
         MODE = 2
     else:
-        mode_str = "mode_one"
         MODE = 1
-    color_start = Color(*CONFIG["general"][mode_str]["start"])
+    white = Color(255,255,255)
     brightness = int(CONFIG["led"]["brightness"])
     color_fade_off(STRIP, brightness, 1)
     time.sleep(20 / 1000.0)
-    color_fade_on(STRIP, brightness, 0.5, color_start)
+    color_fade_on(STRIP, brightness, 1, white)
     time.sleep(20 / 1000.0)
     color_fade_off(STRIP, brightness, 1)
     if MODE == 2:
@@ -233,6 +250,7 @@ if __name__ == "__main__":
     start_timer_thread = None
     dance_dance_thread = None
     brightness = int(CONFIG["led"]["brightness"])
+    start_up()
     while True:
         try:
             if primary_btn.is_pressed and not pb_was_pressed:
