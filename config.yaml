@@ -2,20 +2,20 @@
 # Setup parameters for calm-box
 ---
 general:
-    - timer_length: 55
-    - mode_one:
-      start: [0, 255, 0]
-      middle: [255, 255, 0]
-      end: [255, 0, 0]
-    - mode_two:
-      start: [0, 255, 0]
-      middle: [0, 0, 255]
-      end: [255, 0, 0]
+    timer_length: 55
+    mode_one:
+        start: [0, 255, 0]
+        middle: [255, 255, 0]
+        end: [255, 0, 0]
+    mode_two:
+        start: [0, 255, 0]
+        middle: [0, 0, 255]
+        end: [255, 0, 0]
 led:
-    - pin: 18
-    - count: 60
-    - brightness: 65
-    - frequency: 800000
-    - inverted: false
-    - channel: 0
-    - dma: 10
+    pin: 18
+    count: 60
+    brightness: 65
+    frequency: 800000
+    inverted: false
+    channel: 0
+    dma: 10
