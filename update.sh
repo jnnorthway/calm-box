@@ -21,6 +21,7 @@ if ! git diff-index --quiet HEAD -- || ! test -z "$(git ls-files --others)"; the
     fi
 fi
 
+echo "Updating..."
 git checkout origin $TRACKING_BRANCH
 git reset HEAD --hard
 

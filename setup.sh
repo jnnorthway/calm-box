@@ -8,15 +8,30 @@ fi
 REPO_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo CALM_HOME=$REPO_DIR > $REPO_DIR/.env
 
-if [ -f $REPO_DIR/calm-box.service ]; then
+if [ -f /etc/systemd/system/calm-box.service ]; then
     systemctl stop calm-box.service
     systemctl disable calm-box.service
-    rm $REPO_DIR/calm-box.service
+    rm /etc/systemd/system/calm-box.service
 fi
 cp $REPO_DIR/calm-box.service /etc/systemd/system/
 sed -i "s#{REPLACE_ME}#$REPO_DIR/.env#g" /etc/systemd/system/calm-box.service
 
 systemctl daemon-reload
+if [ -f /usr/lib/python3.*/EXTERNALLY-MANAGED ]; then
+    while true; do
+        read -p "Remove /usr/lib/python3.*/EXTERNALLY-MANAGED? (y/n) " rsp
+        case $rsp in
+            [yY] )
+                rm /usr/lib/python3.*/EXTERNALLY-MANAGED
+                break;;
+            [nN] )
+                echo "This may cause issues on startup"
+                break;;
+            * )
+                echo invalid response;;
+        esac
+    done
+fi
 
 while true; do
     read -p "Update on startup? (y/n) " rsp

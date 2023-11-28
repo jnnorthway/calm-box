@@ -4,9 +4,9 @@ Description=Calm box runner
 [Service]
 Type=simple
 EnvironmentFile={REPLACE_ME}
-ExecStartPre=$CALM_HOME/update.sh
-ExecStartPre=python3 -m pip install -r $CALM_HOME/requirements.txt --break-system-packages
-ExecStart=python3 $CALM_HOME/run.py
+ExecStartPre=/bin/bash $CALM_HOME/update.sh
+ExecStartPre=/bin/bash -c "cd $CALM_HOME && /usr/bin/python3 -m pip install -r requirements.txt"
+ExecStart=/bin/bash -c "cd $CALM_HOME && /usr/bin/python3 run.py"
 
 [Install]
 WantedBy=multi-user.target
