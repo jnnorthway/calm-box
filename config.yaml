@@ -19,3 +19,6 @@ led:
     inverted: false
     channel: 0
     dma: 10
+button:
+    primary: 17
+    secondary: 27
