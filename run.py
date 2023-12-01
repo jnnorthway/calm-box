@@ -41,11 +41,12 @@ def color_fade_off(strip, brightness, timer_length, sleep_time_ms=20):
     while current_time < end_time:
         progress = timer_length - (end_time - current_time)
         px_brightness = interpolate(progress, (0, timer_length), (brightness, 0))
-        print(px_brightness)
         strip.setBrightness(px_brightness)
         strip.show()
         time.sleep(sleep_time_ms / 1000.0)
         current_time = time.time()
+    strip.setBrightness(0)
+    strip.show()
 
 
 def color_fade_on(
