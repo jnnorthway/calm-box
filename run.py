@@ -264,8 +264,10 @@ if __name__ == "__main__":
                 RUNNING = False
                 if start_timer_thread.is_alive():
                     start_timer_thread.join()
+                    start_timer_thread = Thread(target=start_timer, args=())
                 if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
+                    dance_dance_thread = Thread(target=dance_dance, args=())
                 if time.time() - pb_press_time > 3:
                     print("Primary button was held")
                     end_timer()
@@ -282,8 +284,10 @@ if __name__ == "__main__":
                 RUNNING = False
                 if start_timer_thread.is_alive():
                     start_timer_thread.join()
+                    start_timer_thread = Thread(target=start_timer, args=())
                 if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
+                    dance_dance_thread = Thread(target=dance_dance, args=())
                 if time.time() - sb_press_time > 6:
                     print("Secondary button was held")
                     dance_dance_thread.start()
