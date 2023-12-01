@@ -247,8 +247,8 @@ if __name__ == "__main__":
     pb_press_time = None
     sb_was_pressed = False
     sb_press_time = None
-    start_timer_thread = None
-    dance_dance_thread = None
+    start_timer_thread = Thread(target=start_timer, args=())
+    dance_dance_thread = Thread(target=dance_dance, args=())
     brightness = int(CONFIG["led"]["brightness"])
     start_up()
     while True:
@@ -261,18 +261,16 @@ if __name__ == "__main__":
                 # button released, check the time
                 pb_was_pressed = False
                 RUNNING = False
-                if start_timer_thread:
+                if start_timer_thread.is_alive():
                     start_timer_thread.join()
-                    start_timer_thread = None
-                if dance_dance_thread:
+                if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
-                    dance_dance_thread = None
                 if time.time() - pb_press_time > 3:
                     print("Primary button was held")
                     end_timer()
                 else:
                     print("Primary button was pressed")
-                    start_timer_thread = Thread(target=start_timer, args=())
+                    start_timer_thread.start()
             if secondary_btn.is_pressed and not sb_was_pressed:
                 # New press, mark the time
                 sb_press_time = time.time()
@@ -281,15 +279,13 @@ if __name__ == "__main__":
                 # button released, check the time
                 sb_was_pressed = False
                 RUNNING = False
-                if start_timer_thread:
+                if start_timer_thread.is_alive():
                     start_timer_thread.join()
-                    start_timer_thread = None
-                if dance_dance_thread:
+                if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
-                    dance_dance_thread = None
                 if time.time() - sb_press_time > 6:
                     print("Secondary button was held")
-                    dance_dance_thread = Thread(target=dance_dance, args=())
+                    dance_dance_thread.start()
                 else:
                     print("Secondary button was pressed")
                     set_mode()
