@@ -15,7 +15,7 @@ general:
 led:
     pin: 18
     count: 60
-    brightness: 65
+    brightness: 100
     frequency: 800000
     inverted: false
     channel: 0
