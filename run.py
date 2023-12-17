@@ -99,15 +99,19 @@ def get_dance_colour():
 
 def dance_dance():
     """Dance!"""
-    global STRIP, RUNNING
+    global MODE, CONFIG, STRIP, RUNNING
+    if MODE == 1:
+        speed = 5
+    else:
+        speed = 0.5
     RUNNING = True
     brightness = int(CONFIG["led"]["brightness"])
-    color_fade_on(STRIP, brightness, 10, get_dance_colour())
+    color_fade_on(STRIP, brightness, 5, get_dance_colour())
     while RUNNING:
-        color_fade_off(STRIP, brightness, 0.5)
+        color_fade_off(STRIP, brightness, speed)
         if not RUNNING:
             return
-        color_fade_on(STRIP, brightness, 0.5, get_dance_colour())
+        color_fade_on(STRIP, brightness, speed, get_dance_colour())
     color_fade_off(STRIP, brightness, 2)
 
 
@@ -163,7 +167,7 @@ def start_timer():
     color_start = Color(*CONFIG["general"][mode_str]["start"])
     color_middle = Color(*CONFIG["general"][mode_str]["middle"])
     color_end = Color(*CONFIG["general"][mode_str]["end"])
-    timer_length = CONFIG["general"]["timer_length"]
+    timer_length = CONFIG["general"][mode_str]["timer_length"]
     brightness = int(CONFIG["led"]["brightness"])
     timer(
         STRIP,
@@ -184,7 +188,7 @@ def end_timer():
 
 def start_up():
     global MODE, CONFIG, STRIP
-    white = Color(255,255,255)
+    white = Color(255, 255, 255)
     brightness = int(CONFIG["led"]["brightness"])
     STRIP.setBrightness(0)
     color_fade_off(STRIP, brightness, 1)
@@ -205,7 +209,7 @@ def set_mode():
         MODE = 2
     else:
         MODE = 1
-    white = Color(255,255,255)
+    white = Color(255, 255, 255)
     brightness = int(CONFIG["led"]["brightness"])
     color_fade_off(STRIP, brightness, 1)
     time.sleep(20 / 1000.0)
@@ -232,13 +236,13 @@ if __name__ == "__main__":
     )
     STRIP.begin()
 
-    primary_btn = Button(CONFIG["button"]["primary"], hold_time=3)
+    primary_btn = Button(CONFIG["button"]["primary"])
     # Click:
     #   if off: start timer
     #   else: reset timer
     # Hold:
     #   turn off timer
-    secondary_btn = Button(CONFIG["button"]["secondary"], hold_time=6)
+    secondary_btn = Button(CONFIG["button"]["secondary"])
     # Click:
     #   change mode + reset timer
     # Hold:
@@ -264,15 +268,14 @@ if __name__ == "__main__":
                 RUNNING = False
                 if start_timer_thread.is_alive():
                     start_timer_thread.join()
-                    start_timer_thread = Thread(target=start_timer, args=())
                 if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
-                    dance_dance_thread = Thread(target=dance_dance, args=())
-                if time.time() - pb_press_time > 3:
+                if time.time() - pb_press_time > 1.5:
                     print("Primary button was held")
                     end_timer()
                 else:
                     print("Primary button was pressed")
+                    start_timer_thread = Thread(target=start_timer, args=())
                     start_timer_thread.start()
             if secondary_btn.is_pressed and not sb_was_pressed:
                 # New press, mark the time
@@ -284,12 +287,11 @@ if __name__ == "__main__":
                 RUNNING = False
                 if start_timer_thread.is_alive():
                     start_timer_thread.join()
-                    start_timer_thread = Thread(target=start_timer, args=())
                 if dance_dance_thread.is_alive():
                     dance_dance_thread.join()
-                    dance_dance_thread = Thread(target=dance_dance, args=())
-                if time.time() - sb_press_time > 6:
+                if time.time() - sb_press_time > 4:
                     print("Secondary button was held")
+                    dance_dance_thread = Thread(target=dance_dance, args=())
                     dance_dance_thread.start()
                 else:
                     print("Secondary button was pressed")

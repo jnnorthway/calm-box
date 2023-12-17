@@ -31,3 +31,7 @@ git clean -f -d
 git pull origin $TRACKING_BRANCH
 
 echo "Repo has been updated"
+
+echo "Installing new python requirements"
+/usr/bin/python3 -m pip install -r requirements.txt
+echo "Python requirements updated"

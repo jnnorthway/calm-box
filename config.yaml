@@ -2,12 +2,13 @@
 # Setup parameters for calm-box
 ---
 general:
-    timer_length: 55
     mode_one:
+        timer_length: 3000
         start: [0, 255, 0]
         middle: [255, 255, 0]
         end: [255, 0, 0]
     mode_two:
+        timer_length: 4800
         start: [0, 255, 0]
         middle: [0, 0, 255]
         end: [255, 0, 0]
