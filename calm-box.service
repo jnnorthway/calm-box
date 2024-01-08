@@ -4,8 +4,9 @@ Description=Calm box runner
 [Service]
 Type=simple
 EnvironmentFile={REPLACE_ME}
-ExecStartPre=/bin/bash $CALM_HOME/update.sh
+ExecStartPre=su vagrant /bin/bash -c "cd $CALM_HOME && ./update.sh"
 ExecStart=/bin/bash -c "cd $CALM_HOME && /usr/bin/python3 -u run.py"
+KillSignal=SIGINT
 
 [Install]
 WantedBy=multi-user.target
